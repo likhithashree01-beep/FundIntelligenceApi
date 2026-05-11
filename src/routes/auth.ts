@@ -51,10 +51,15 @@ router.post('/login', (req: Request, res: Response) => {
     .get(parsed.data.email);
 
   if (!user || !bcrypt.compareSync(parsed.data.password, user.password_hash)) {
+    req.log.warn(
+      { email: parsed.data.email, ip: req.ip, reason: user ? 'bad_password' : 'unknown_email' },
+      'login failed',
+    );
     res.status(401).json({ error: 'Invalid credentials' });
     return;
   }
 
+  req.log.info({ userId: user.id, email: user.email, ip: req.ip }, 'login success');
   res.json(issueTokens({ id: user.id, email: user.email }));
 });
 
@@ -68,11 +73,14 @@ router.post('/refresh', (req: Request, res: Response) => {
   try {
     const payload = jwt.verify(parsed.data.refreshToken, config.jwt.refreshSecret) as JwtPayload;
     if (payload.type !== 'refresh') {
+      req.log.warn({ ip: req.ip, type: payload.type }, 'refresh rejected: wrong token type');
       res.status(401).json({ error: 'Wrong token type' });
       return;
     }
+    req.log.info({ userId: payload.sub, email: payload.email }, 'token refreshed');
     res.json(issueTokens({ id: Number(payload.sub), email: payload.email }));
-  } catch {
+  } catch (err) {
+    req.log.warn({ ip: req.ip, err: (err as Error).message }, 'refresh rejected: invalid token');
     res.status(401).json({ error: 'Invalid or expired refresh token' });
   }
 });

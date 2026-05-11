@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import fs from 'fs';
 import path from 'path';
 import { config } from '../config';
+import { logger } from '../logger';
 import { SeedDataset } from '../types';
 import { getDb } from './database';
 
@@ -19,9 +20,12 @@ export const seed = (options: { force?: boolean } = {}): void => {
   const userCount = (db.prepare('SELECT COUNT(*) AS n FROM users').get() as { n: number }).n;
 
   if (!options.force && fundCount > 0 && userCount > 0) {
+    logger.debug({ funds: fundCount, users: userCount }, 'seed: skipped (already populated)');
     return;
   }
 
+  logger.info({ force: options.force ?? false }, 'seed: starting');
+  const startedAt = Date.now();
   const dataset = loadDataset();
 
   const insertUser = db.prepare(
@@ -46,6 +50,9 @@ export const seed = (options: { force?: boolean } = {}): void => {
     `INSERT OR IGNORE INTO portfolio_company_flags (company_id, flag) VALUES (?, ?)`,
   );
 
+  let companyTotal = 0;
+  let navPointTotal = 0;
+
   const run = db.transaction(() => {
     const hash = bcrypt.hashSync(config.seedUser.password, 10);
     insertUser.run(config.seedUser.email, hash);
@@ -66,6 +73,7 @@ export const seed = (options: { force?: boolean } = {}): void => {
 
       for (const point of fund.navHistory) {
         insertNav.run(fund.id, point.month, point.nav);
+        navPointTotal += 1;
       }
 
       for (const company of fund.portfolioCompanies) {
@@ -87,15 +95,25 @@ export const seed = (options: { force?: boolean } = {}): void => {
         for (const flag of company.flags) {
           insertFlag.run(company.id, flag);
         }
+        companyTotal += 1;
       }
     }
   });
 
   run();
+
+  logger.info(
+    {
+      funds: dataset.funds.length,
+      companies: companyTotal,
+      navPoints: navPointTotal,
+      durationMs: Date.now() - startedAt,
+    },
+    'seed: complete',
+  );
 };
 
 if (require.main === module) {
   seed({ force: true });
-  // eslint-disable-next-line no-console
-  console.log(`Seeded ${config.databasePath}`);
+  logger.info({ path: config.databasePath }, 'seed: standalone run finished');
 }
