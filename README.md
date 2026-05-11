@@ -2,6 +2,23 @@
 
 Backend service for the Nordic Analytics Fund Intelligence Dashboard. Express + TypeScript on top of SQLite, with JWT auth (access + refresh tokens) and the funds.json dataset seeded on first boot.
 
+## Repos
+
+| Service | Repository |
+| ------- | ---------- |
+| Backend API (this repo) | https://github.com/likhithashree01-beep/FundIntelligenceApi |
+| Frontend | https://github.com/likhithashree01-beep/FundIntelligenceWeb |
+
+## Bonus features completed
+
+All optional bonus items from the case study were implemented:
+
+- **`GET /api/funds/:id/portfolio?flag=watch`** — filters portfolio companies by flag using an indexed junction-table query
+- **Rate limiting** — tiered: 20 req / 15 min on auth routes, 120 req / min on API reads
+- **`POST /api/auth/refresh`** — returns a new token pair; frontend silently retries on 401
+- **Integration tests** — 6 tests covering auth, fund list, fund detail, performance range, flag filter, and 404 (see [Tests](#tests))
+- **Structured logging** — Pino with per-request IDs, redacted auth headers, status-derived log levels, and silent mode in test
+
 ## Stack
 
 - **Runtime:** Node.js 20+, TypeScript
@@ -13,22 +30,42 @@ Backend service for the Nordic Analytics Fund Intelligence Dashboard. Express + 
 - **Logging:** Pino + pino-http (JSON in prod, pretty in dev) with automatic per-request IDs
 - **Tests:** Vitest + Supertest
 
-## Getting started
+## (a) Getting started — both services
+
+Both the API and frontend are separate repositories and must be started independently. Start the API first; the frontend proxies `/api/*` to `http://localhost:4000` in dev.
+
+### 1. Start the API (this repo)
 
 ```bash
+git clone https://github.com/likhithashree01-beep/FundIntelligenceApi
+cd FundIntelligenceApi
 npm install
 cp .env.example .env        # optional — fallbacks work for local dev
 npm run dev                 # http://localhost:4000
 ```
 
-The SQLite file is created and seeded automatically on first boot (`./data/fund_intelligence.db`). To reset and reseed:
+The SQLite file is created and seeded automatically on first boot (`./data/fund_intelligence.db`). No manual setup needed.
+
+To reset and reseed:
 
 ```bash
 rm -f data/fund_intelligence.db
 npm run seed
 ```
 
-### Other scripts
+### 2. Start the frontend
+
+```bash
+git clone https://github.com/likhithashree01-beep/FundIntelligenceWeb
+cd FundIntelligenceWeb
+npm install
+cp .env.example .env
+npm run dev                 # http://localhost:5173
+```
+
+Open **http://localhost:5173** and sign in with `demo@nordic.io` / `demo123`.
+
+### Scripts (API)
 
 | Command          | What it does                                    |
 | ---------------- | ----------------------------------------------- |
@@ -134,7 +171,26 @@ See [`src/db/schema.sql`](src/db/schema.sql). Six tables, all created on boot:
 7. **Schema migrations.** Today the schema is one `schema.sql` applied with `CREATE TABLE IF NOT EXISTS`. Production needs versioned migrations (Drizzle, Prisma, or plain numbered SQL files) so schema changes are reviewable and reversible.
 8. **PostgreSQL.** SQLite is great here; a multi-writer production workload wants Postgres for concurrent writes, richer types, partial indexes, and proper backup tooling.
 9. **CORS + secrets hardening.** Tight origin allow-list, secrets from a vault rather than `.env`, signed-cookie session option for the frontend.
-10. **Tests.** Unit tests for the auth flow and query builders, e2e tests against a containerised Postgres, contract tests against an OpenAPI schema.
+10. **Deeper test coverage.** Integration tests exist for the happy path and key error cases. Next: unit tests for the auth flow and query builders, e2e tests against a containerised Postgres, contract tests against an OpenAPI spec to catch frontend/backend drift early.
+
+## Tests
+
+6 integration tests running against a real SQLite database (temporary file, wiped per run):
+
+| Test | Covers |
+| ---- | ------ |
+| Unauthenticated request | `GET /api/funds` returns 401 without a token |
+| Fund list | Returns all 3 seeded funds with correct shape |
+| Fund detail | Returns navHistory + portfolioCompanies for a known fund |
+| Performance range | `?from=2024-03&to=2024-06` returns only the months in range |
+| Flag filter | `?flag=watch` returns only companies with that flag |
+| Unknown fund | `GET /api/funds/fund-999` returns 404 |
+
+```bash
+npm test
+```
+
+Tests use a separate `DATABASE_PATH` env var pointing to a temp file — the dev database is never touched.
 
 ## Environment variables
 
