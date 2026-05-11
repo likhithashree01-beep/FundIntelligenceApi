@@ -10,6 +10,7 @@ Backend service for the Nordic Analytics Fund Intelligence Dashboard. Express + 
 - **Auth:** `jsonwebtoken` + `bcryptjs`
 - **Validation:** Zod on request bodies and query params
 - **Rate limiting:** `express-rate-limit`
+- **Logging:** Pino + pino-http (JSON in prod, pretty in dev) with automatic per-request IDs
 - **Tests:** Vitest + Supertest
 
 ## Getting started
@@ -70,6 +71,32 @@ curl -s -H "Authorization: Bearer $TOKEN" \
   "http://localhost:4000/api/funds/fund-001/performance?from=2024-03&to=2024-06"
 ```
 
+## Logs & observability
+
+Every request gets an auto-generated `req.id` that propagates through every log line for that request — grep one ID to reconstruct a full request trace. Levels are derived automatically from the response status (`5xx → error`, `4xx → warn`, `2xx/3xx → info`).
+
+**What gets logged**
+
+| Event | Level | Includes |
+| --- | --- | --- |
+| Boot | `info` | port, env, db path (created vs reopened), seed counts + duration |
+| Each request | by status | method, full URL, status, response time, request id |
+| Login | `info` / `warn` | user id, email, ip, reason on failure (`bad_password` / `unknown_email`) |
+| Token refresh | `info` / `warn` | user id, ip, reason on failure (`wrong type` / `invalid_token`) |
+| Slow / large response | `warn` | duration > 200ms or body > 1MB |
+| Unhandled 500 | `error` | stack, method, url, req id, user id (if authenticated) |
+| Health checks | (silenced) | `/api/health` never logs |
+| Tests | (silenced) | `NODE_ENV=test` sets the logger level to `silent` |
+
+**Format**
+
+- Development (`NODE_ENV=development`): pretty-printed, colorised, single multiline block per log.
+- Production (`NODE_ENV=production`): one JSON line per log — ready for Loki, Datadog, CloudWatch, etc.
+
+**Redaction**
+
+`Authorization`, `Cookie`, and any field named `password*` / `password_hash` are replaced with `[redacted]` automatically — see [`src/logger.ts`](src/logger.ts). Bearer tokens never appear in logs.
+
 ## Database schema
 
 See [`src/db/schema.sql`](src/db/schema.sql). Six tables, all created on boot:
@@ -103,7 +130,7 @@ See [`src/db/schema.sql`](src/db/schema.sql). Six tables, all created on boot:
 3. **Pagination & filtering on `/api/funds`.** Three funds is fine; three thousand is not. Cursor pagination, sort, and filter by type/vintage/region.
 4. **Computed analytics.** Currently the metrics are stored snapshots. In production they'd be derived from cash-flow and valuation tables on demand or materialised on a schedule.
 5. **Caching.** ETags on detail endpoints, Redis for hot fund lookups.
-6. **Observability.** Structured logging (pino), request IDs, OpenTelemetry traces, Prometheus metrics, error tracking.
+6. **Deeper observability.** Pino + request IDs are in place; next steps are shipping logs to an aggregator (Loki / Datadog), OpenTelemetry traces across the API/DB, Prometheus metrics for latency/throughput/error rate, and Sentry for unhandled error tracking.
 7. **Schema migrations.** Today the schema is one `schema.sql` applied with `CREATE TABLE IF NOT EXISTS`. Production needs versioned migrations (Drizzle, Prisma, or plain numbered SQL files) so schema changes are reviewable and reversible.
 8. **PostgreSQL.** SQLite is great here; a multi-writer production workload wants Postgres for concurrent writes, richer types, partial indexes, and proper backup tooling.
 9. **CORS + secrets hardening.** Tight origin allow-list, secrets from a vault rather than `.env`, signed-cookie session option for the frontend.
