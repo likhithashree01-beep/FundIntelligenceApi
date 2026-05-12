@@ -56,7 +56,6 @@ Both the API and frontend are separate repositories and must be started independ
 
 ```bash
 git clone https://github.com/likhithashree01-beep/FundIntelligenceApi
-cd FundIntelligenceApi
 npm install
 cp .env.example .env        # optional — fallbacks work for local dev
 npm run dev                 # http://localhost:4000
@@ -75,7 +74,6 @@ npm run seed
 
 ```bash
 git clone https://github.com/likhithashree01-beep/FundIntelligenceWeb
-cd FundIntelligenceWeb
 npm install
 cp .env.example .env
 npm run dev                 # http://localhost:5173
