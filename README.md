@@ -2,6 +2,24 @@
 
 Backend service for the Nordic Analytics Fund Intelligence Dashboard. Express + TypeScript on top of SQLite, with JWT auth (access + refresh tokens) and the funds.json dataset seeded on first boot.
 
+## Live demo
+
+| | URL |
+| --- | --- |
+| Frontend | https://fund-intelligence-web.vercel.app |
+| Backend API | https://fundintelligenceapi.onrender.com |
+
+Sign in with `demo@nordic.io` / `demo123`.
+
+### Deployment gotchas
+
+- **Render cold start** — free tier sleeps after 15 min of inactivity. First request after idle takes ~30 sec to wake up.
+- **SQLite resets on redeploy** — Render's filesystem is ephemeral; every new deploy wipes the database. The app auto-seeds on boot so data is always present after startup.
+- **Node pinned to 20.x** — `better-sqlite3` v11 fails to compile on Node 26 (breaking V8 API change). Pinned via `engines` in `package.json` and `NODE_VERSION=20` env var on Render.
+- **Non-TS assets** — `tsc` only compiles `.ts` files. `schema.sql` and `funds.json` are copied to `dist/` explicitly in the build script.
+- **CORS** — set to `*` on Render for simplicity. Lock it down by setting `CORS_ORIGIN=https://fund-intelligence-web.vercel.app` in Render's environment variables for stricter production use.
+- **devDependencies in build** — Render sets `NODE_ENV=production` during build, which makes `npm install` skip devDependencies (including `tsc`). The build command uses `--include=dev` to force them in.
+
 ## Repos
 
 | Service | Repository |
