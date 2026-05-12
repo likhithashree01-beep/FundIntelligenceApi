@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && cp src/db/schema.sql dist/db/schema.sql",
+    "build": "tsc && cp src/db/schema.sql dist/db/schema.sql && mkdir -p dist/data && cp src/data/funds.json dist/data/funds.json",
     "start": "node dist/index.js",
     "seed": "tsx src/db/seed.ts",
     "test": "vitest run"
