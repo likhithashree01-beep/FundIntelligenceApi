@@ -2,6 +2,7 @@ node_modules
 dist
 .env
 data/
+!src/data/
 coverage
 *.log
 .DS_Store

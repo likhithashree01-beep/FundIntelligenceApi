@@ -1,0 +1,192 @@
+{
+  "funds": [
+    {
+      "id": "fund-001",
+      "name": "Nordvest Capital Fund III",
+      "type": "Private Equity",
+      "vintage": 2019,
+      "totalCommitments": 250000000,
+      "metrics": {
+        "irr": 18.4,
+        "tvpi": 1.72,
+        "dpi": 0.48,
+        "rvpi": 1.24,
+        "nav": 182000000
+      },
+      "navHistory": [
+        { "month": "2024-01", "nav": 142000000 },
+        { "month": "2024-02", "nav": 147000000 },
+        { "month": "2024-03", "nav": 151000000 },
+        { "month": "2024-04", "nav": 154000000 },
+        { "month": "2024-05", "nav": 158000000 },
+        { "month": "2024-06", "nav": 161000000 },
+        { "month": "2024-07", "nav": 165000000 },
+        { "month": "2024-08", "nav": 168000000 },
+        { "month": "2024-09", "nav": 171000000 },
+        { "month": "2024-10", "nav": 174000000 },
+        { "month": "2024-11", "nav": 178000000 },
+        { "month": "2024-12", "nav": 182000000 }
+      ],
+      "portfolioCompanies": [
+        {
+          "id": "pc-001",
+          "name": "Lumio AS",
+          "sector": "SaaS",
+          "country": "Norway",
+          "revenue": 12400000,
+          "ebitda": 3100000,
+          "ebitdaMargin": 25.0,
+          "status": "Active",
+          "investmentDate": "2020-03-15",
+          "investedCapital": 8000000,
+          "currentValue": 22000000,
+          "flags": []
+        },
+        {
+          "id": "pc-002",
+          "name": "FleetOS GmbH",
+          "sector": "Logistics Tech",
+          "country": "Germany",
+          "revenue": 7800000,
+          "ebitda": 780000,
+          "ebitdaMargin": 10.0,
+          "status": "Active",
+          "investmentDate": "2021-06-01",
+          "investedCapital": 5000000,
+          "currentValue": 6200000,
+          "flags": ["watch"]
+        },
+        {
+          "id": "pc-003",
+          "name": "BioStride Ltd",
+          "sector": "HealthTech",
+          "country": "UK",
+          "revenue": 3200000,
+          "ebitda": -480000,
+          "ebitdaMargin": -15.0,
+          "status": "Active",
+          "investmentDate": "2022-09-10",
+          "investedCapital": 6000000,
+          "currentValue": 5100000,
+          "flags": ["at-risk"]
+        }
+      ]
+    },
+    {
+      "id": "fund-002",
+      "name": "Baltic Ventures Fund I",
+      "type": "Venture Capital",
+      "vintage": 2021,
+      "totalCommitments": 80000000,
+      "metrics": {
+        "irr": 31.2,
+        "tvpi": 1.41,
+        "dpi": 0.12,
+        "rvpi": 1.29,
+        "nav": 72000000
+      },
+      "navHistory": [
+        { "month": "2024-01", "nav": 52000000 },
+        { "month": "2024-02", "nav": 54000000 },
+        { "month": "2024-03", "nav": 55000000 },
+        { "month": "2024-04", "nav": 57000000 },
+        { "month": "2024-05", "nav": 59000000 },
+        { "month": "2024-06", "nav": 61000000 },
+        { "month": "2024-07", "nav": 63000000 },
+        { "month": "2024-08", "nav": 65000000 },
+        { "month": "2024-09", "nav": 67000000 },
+        { "month": "2024-10", "nav": 69000000 },
+        { "month": "2024-11", "nav": 71000000 },
+        { "month": "2024-12", "nav": 72000000 }
+      ],
+      "portfolioCompanies": [
+        {
+          "id": "pc-004",
+          "name": "Kreditt.io",
+          "sector": "Fintech",
+          "country": "Finland",
+          "revenue": 4200000,
+          "ebitda": 630000,
+          "ebitdaMargin": 15.0,
+          "status": "Active",
+          "investmentDate": "2021-11-20",
+          "investedCapital": 3000000,
+          "currentValue": 9800000,
+          "flags": []
+        },
+        {
+          "id": "pc-005",
+          "name": "CloudTrace AB",
+          "sector": "Dev Tools",
+          "country": "Sweden",
+          "revenue": 2100000,
+          "ebitda": -420000,
+          "ebitdaMargin": -20.0,
+          "status": "Active",
+          "investmentDate": "2022-04-05",
+          "investedCapital": 2500000,
+          "currentValue": 3200000,
+          "flags": ["watch"]
+        }
+      ]
+    },
+    {
+      "id": "fund-003",
+      "name": "Nordic Growth Equity II",
+      "type": "Growth Equity",
+      "vintage": 2018,
+      "totalCommitments": 400000000,
+      "metrics": {
+        "irr": 14.1,
+        "tvpi": 2.08,
+        "dpi": 1.45,
+        "rvpi": 0.63,
+        "nav": 98000000
+      },
+      "navHistory": [
+        { "month": "2024-01", "nav": 118000000 },
+        { "month": "2024-02", "nav": 115000000 },
+        { "month": "2024-03", "nav": 112000000 },
+        { "month": "2024-04", "nav": 110000000 },
+        { "month": "2024-05", "nav": 108000000 },
+        { "month": "2024-06", "nav": 106000000 },
+        { "month": "2024-07", "nav": 104000000 },
+        { "month": "2024-08", "nav": 102000000 },
+        { "month": "2024-09", "nav": 101000000 },
+        { "month": "2024-10", "nav": 100000000 },
+        { "month": "2024-11", "nav": 99000000 },
+        { "month": "2024-12", "nav": 98000000 }
+      ],
+      "portfolioCompanies": [
+        {
+          "id": "pc-006",
+          "name": "Borealis Energy",
+          "sector": "CleanTech",
+          "country": "Denmark",
+          "revenue": 31000000,
+          "ebitda": 8680000,
+          "ebitdaMargin": 28.0,
+          "status": "Active",
+          "investmentDate": "2019-02-28",
+          "investedCapital": 25000000,
+          "currentValue": 61000000,
+          "flags": []
+        },
+        {
+          "id": "pc-007",
+          "name": "Timberwolf Logistics",
+          "sector": "Logistics",
+          "country": "Norway",
+          "revenue": 18500000,
+          "ebitda": 1480000,
+          "ebitdaMargin": 8.0,
+          "status": "Active",
+          "investmentDate": "2019-08-12",
+          "investedCapital": 15000000,
+          "currentValue": 17200000,
+          "flags": ["watch"]
+        }
+      ]
+    }
+  ]
+}
