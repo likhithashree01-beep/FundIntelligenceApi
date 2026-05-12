@@ -67,7 +67,16 @@ export const createApp = (): express.Express => {
     next();
   });
 
-  app.use(cors({ origin: config.corsOrigin, credentials: true }));
+  // '*'               → allow all origins (deployed, no cookies needed — we use Bearer tokens)
+  // 'http://x,https://y' → allow specific list (comma-separated)
+  // single value      → exact match (local dev default)
+  const corsOrigin =
+    config.corsOrigin === '*'
+      ? true
+      : config.corsOrigin.includes(',')
+        ? config.corsOrigin.split(',').map((o) => o.trim())
+        : config.corsOrigin;
+  app.use(cors({ origin: corsOrigin }));
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/api/health', (_req, res) => {
